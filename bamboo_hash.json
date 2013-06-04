@@ -1,6 +1,26 @@
-{"Education_Facilities":false,
-"Education_LGA":false,
-"Health_Facilities":false,
-"Health_LGA":false,
-"Water_Facilities":false,
-"Water_LGA":false}
+{
+  "Education_Facilities": {
+    "file" : "Education_Facilities.csv",
+    "bamboo_hash" : null
+  },
+  "Education_LGA": {
+    "file" : "Education_LGA.csv",
+    "bamboo_hash" : null
+  },
+  "Health_Facilities": {
+    "file" : "Health_Facilities.csv",
+    "bamboo_hash" : null
+  },
+  "Health_LGA": {
+    "file" : "Health_LGA.csv",
+    "bamboo_hash" : null
+  },
+  "Water_Facilities": {
+    "file" : "Water_Facilities.csv",
+    "bamboo_hash" : null
+  },
+  "Water_LGA": {
+    "file" : "Water_LGA.csv",
+    "bamboo_hash" : null
+  }
+}
