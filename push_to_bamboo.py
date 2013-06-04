@@ -3,16 +3,15 @@ import sys
 from pybamboo.dataset import Dataset
 from pybamboo.exceptions import PyBambooException
 
-
 BAMBOO_HASH_FILE = 'bamboo_hash.json'
-DATA_FILE_FORMAT = 'csv'
 
+# get the current bamboo hash
 bamboo_hash = None
 try:
     with open(BAMBOO_HASH_FILE) as f:
         try:
             bamboo_hash = json.loads(f.read())
-        except:
+        except JSONDecodeError:
             print '%s does not contain a valid JSON document.' %\
                 BAMBOO_HASH_FILE
             sys.exit(1)
@@ -23,16 +22,32 @@ if bamboo_hash is None:
     print 'Could not load %s' % BAMBOO_HASH_FILE
     sys.exit(1)
 
+# update the datasets
 hash_updates = dict()
-for data_file, bamboo_id in bamboo_hash.iteritems():
-    filename = data_file + '.' + DATA_FILE_FORMAT
-    #print '%s -> %s' % (filename, bamboo_id)
+for name, content in bamboo_hash.iteritems():
+    filename = content['filename']
+    bamboo_id = content['bamboo_id']
+    print '%s -> %s' % (filename, bamboo_id)
     if bamboo_id:
-        print '%s has bamboo id: %s' % (data_file, bamboo_id)
+        print '%s has bamboo id: %s' % (name, bamboo_id)
+        # reset the dataset to the current one
     else:
-        print '%s has no bamboo id. Adding file to bamboo.' % data_file
+        print '%s has no bamboo id. Adding file to bamboo.' % name
         try:
-            dataset = Dataset(path=filename)
-            # save dataset id for file?
+            file_path = 'data/' + filename
+            dataset = Dataset(path=file_path)
+            hash_updates[name] = {
+                'filename': filename,
+                'bamboo_id': dataset.id,
+            }
         except PyBambooException:
             print 'Error creating dataset for file: %s' % filename
+
+# update the hash file
+bamboo_hash.update(hash_updates)
+try:
+    with open(BAMBOO_HASH_FILE, 'wb') as f:
+        f.write(json.dumps(bamboo_hash))
+except IOError:
+    print 'Error writing file: %s' % BAMBOO_HASH_FILE
+    sys.exit(1)
