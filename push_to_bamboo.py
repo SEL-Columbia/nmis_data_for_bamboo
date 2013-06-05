@@ -27,14 +27,19 @@ hash_updates = dict()
 for name, content in bamboo_hash.iteritems():
     filename = content['filename']
     bamboo_id = content['bamboo_id']
+    file_path = 'data/' + filename
     print '%s -> %s' % (filename, bamboo_id)
     if bamboo_id:
-        print '%s has bamboo id: %s' % (name, bamboo_id)
-        # reset the dataset to the current one
+        print '%s has bamboo id: %s. Updating bamboo dataset.' %\
+            (name, bamboo_id)
+        try:
+            dataset = Dataset(dataset_id=bamboo_id)
+            dataset.reset(path=file_path)
+        except PyBambooException:
+            print 'Error creating dataset for file: %s' % filename
     else:
         print '%s has no bamboo id. Adding file to bamboo.' % name
         try:
-            file_path = 'data/' + filename
             dataset = Dataset(path=file_path)
             hash_updates[name] = {
                 'filename': filename,
