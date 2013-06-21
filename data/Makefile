@@ -6,9 +6,11 @@ OF=_Facilities.csv
 OL=_LGA.csv
 NF=_661_NMIS_Facility.csv
 NL=_LGA_level_661.csv
-all: $(E)$(OF) $(H)$(OF) $(W)$(OF) $(E)$(OL) $(H)$(OL) $(W)$(OL) 
+all: $(E)$(OF) $(H)$(OF) $(W)$(OF) LGA_Data.csv 
 clean:
 	rm *.csv
+LGA_Data.csv: $(E)$(OL) $(H)$(OL) $(W)$(OL) MergeData.R
+	R CMD BATCH MergeData.R /dev/tty
 $(E)$(OF): $(DATA_DIR)/$(E)$(NF)
 	cp $(DATA_DIR)/$(E)$(NF) $(E)$(OF) 
 $(H)$(OF): $(DATA_DIR)/$(H)$(NF)
