@@ -11,7 +11,6 @@ clean:
 	rm *.csv
 LGA_Data.csv: $(E)$(OL) $(H)$(OL) $(W)$(OL) MergeData.R
 	R CMD BATCH MergeData.R /dev/tty
-	rm $(E)$(OL) $(H)$(OL) $(W)$(OL)
 $(E)$(OF): $(DATA_DIR)/$(E)$(NF)
 	cp $(DATA_DIR)/$(E)$(NF) $(E)$(OF) 
 $(H)$(OF): $(DATA_DIR)/$(H)$(NF)
