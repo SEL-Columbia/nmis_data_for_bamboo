@@ -4,13 +4,14 @@ H=Health
 W=Water
 OF=_Facilities.csv
 OL=_LGA.csv
-NF=_661_NMIS_Facility.csv
-NL=_LGA_level_661.csv
+NF=_774_NMIS_Facility.csv
+NL=_LGA_level_774.csv
 all: $(E)$(OF) $(H)$(OF) $(W)$(OF) LGA_Data.csv 
 clean:
 	rm *.csv
 LGA_Data.csv: $(E)$(OL) $(H)$(OL) $(W)$(OL) MergeData.R
 	R CMD BATCH MergeData.R /dev/tty
+	rm $(E)$(OL) $(H)$(OL) $(W)$(OL)
 $(E)$(OF): $(DATA_DIR)/$(E)$(NF)
 	cp $(DATA_DIR)/$(E)$(NF) $(E)$(OF) 
 $(H)$(OF): $(DATA_DIR)/$(H)$(NF)
