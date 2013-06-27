@@ -1,5 +1,6 @@
 setwd("~/Code/nmis_data_for_bamboo/data")
 
+
 myDropCols <- function(df) {
   df$X <- NULL
   df$lga <- NULL
@@ -11,9 +12,17 @@ myDropCols <- function(df) {
 hl <- myDropCols(read.csv("Health_LGA.csv", stringsAsFactors=FALSE))
 el <- myDropCols(read.csv("Education_LGA.csv", stringsAsFactors=FALSE))
 wl <- myDropCols(read.csv("Water_LGA.csv", stringsAsFactors=FALSE))
+ex <- myDropCols(read.csv("External_Data.csv", stringsAsFactors=FALSE))
 lgas <- read.csv("~/Dropbox/Nigeria/Nigeria 661 Baseline Data Cleaning/lgas.csv")
 
+outputIfLgaIDDuplicated <- function(df) {
+  if(anyDuplicated(df$lga_id)) {
+    warning(paste("DUPLICATED LGA_IDs:", 
+                  paste(df[duplicated(df$lga_id), 'lga_id'], collapse=" "), '\n'))
+  }
+}
+errs <- lapply(list(hl, el, wl, ex), outputIfLgaIDDuplicated)
 
-all <- merge(lgas, merge(merge(hl, el, by="lga_id"), wl, by="lga_id"), by="lga_id")
+mmerge <- function(x, y) { merge(x, y, by="lga_id", all=T)}
+all <- mmerge(lgas, mmerge(ex, mmerge(wl, mmerge(hl, el))))
 write.csv(all, "LGA_Data.csv")
-
