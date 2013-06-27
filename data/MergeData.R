@@ -17,12 +17,16 @@ lgas <- read.csv("~/Dropbox/Nigeria/Nigeria 661 Baseline Data Cleaning/lgas.csv"
 
 outputIfLgaIDDuplicated <- function(df) {
   if(anyDuplicated(df$lga_id)) {
-    warning(paste("DUPLICATED LGA_IDs:", 
-                  paste(df[duplicated(df$lga_id), 'lga_id'], collapse=" "), '\n'))
+    cat(paste("\n\n~~~~~ERROR~~~~~\n DUPLICATED LGA_IDs:"),
+        paste(df[duplicated(df$lga_id), 'lga_id'], collapse=" "),
+        "\n\n")
   }
 }
-errs <- lapply(list(hl, el, wl, ex), outputIfLgaIDDuplicated)
+errs <- lapply(list(hl, wl, el, ex), outputIfLgaIDDuplicated)
+if(is.null(unlist(errs))) stop()
 
-mmerge <- function(x, y) { merge(x, y, by="lga_id", all=T)}
+mmerge <- function(x, y) {
+  merge(x, y, by="lga_id", all=T)
+}
 all <- mmerge(lgas, mmerge(ex, mmerge(wl, mmerge(hl, el))))
 write.csv(all, "LGA_Data.csv")
