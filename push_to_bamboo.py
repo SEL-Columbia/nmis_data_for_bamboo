@@ -27,6 +27,7 @@ hash_updates = dict()
 for name, content in bamboo_hash.iteritems():
     filename = content['filename']
     bamboo_id = content['bamboo_id']
+    sector = content.get('sector')
     file_path = 'data/' + filename
     print '%s -> %s' % (filename, bamboo_id)
     if bamboo_id:
@@ -34,7 +35,17 @@ for name, content in bamboo_hash.iteritems():
             (name, bamboo_id)
         try:
             dataset = Dataset(dataset_id=bamboo_id)
+            dataset.remove_calculation('sector')
             dataset.reset(path=file_path)
+            if sector:
+                formula = '"%s"' % sector
+                print 'Adding column for sector: %s, formula: %s' %\
+                    (sector, formula)
+                result = dataset.add_calculation('sector', formula)
+                if result:
+                    print 'Calculation added successfully!'
+                else:
+                    print 'Problem adding calculation!'
         except PyBambooException:
             print 'Error creating dataset for file: %s' % filename
     else:
