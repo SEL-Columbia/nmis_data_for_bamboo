@@ -6,12 +6,10 @@ OF=_Facilities.csv
 OL=_LGA.csv
 NF=_774_NMIS_Facility.csv
 NL=_LGA_level_774.csv
-EXT=External_Data.csv
-all: $(E)$(OF) $(H)$(OF) $(W)$(OF) LGA_Data.csv 
+EXT=ALL_774.csv
+all: $(E)$(OF) $(H)$(OF) $(W)$(OF) $(EXT)
 clean:
 	rm *.csv
-LGA_Data.csv: $(E)$(OL) $(H)$(OL) $(W)$(OL) MergeData.R $(EXT)
-	R CMD BATCH --slave --no-restore MergeData.R /dev/tty
 
 $(EXT): $(DATA_DIR)/$(EXT)
 	cp $(DATA_DIR)/$(EXT) $(EXT)
