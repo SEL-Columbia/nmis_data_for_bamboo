@@ -28,5 +28,10 @@ if(is.null(unlist(errs))) stop()
 mmerge <- function(x, y) {
   merge(x, y, by="lga_id", all=T)
 }
+
+myfmerge <- function(left, right){
+    merge(x = left, y = right, by="lga_id", all.x=T)
+}
+
 all <- mmerge(lgas, mmerge(ex, mmerge(wl, mmerge(hl, el))))
 write.csv(all, "LGA_Data.csv")

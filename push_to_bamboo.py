@@ -1,9 +1,13 @@
-import simplejson as json
+try:
+    import simplejson as json
+except:
+    import json
 import sys
 from pybamboo.dataset import Dataset
 from pybamboo.exceptions import PyBambooException
 
-BAMBOO_HASH_FILE = 'bamboo_hash.json'
+BAMBOO_HASH_FILE = 'new_bamboo_hash.json'
+data_dir = "data_774/"
 
 # get the current bamboo hash
 bamboo_hash = None
@@ -26,38 +30,30 @@ if bamboo_hash is None:
 hash_updates = dict()
 for name, content in bamboo_hash.iteritems():
     filename = content['filename']
+    data_format = filename.split('.')[1]
     bamboo_id = content['bamboo_id']
-    sector = content.get('sector')
-    file_path = 'data/' + filename
+
+    file_path = data_dir + filename
     print '%s -> %s' % (filename, bamboo_id)
     if bamboo_id:
         print '%s has bamboo id: %s. Updating bamboo dataset.' %\
             (name, bamboo_id)
         try:
             dataset = Dataset(dataset_id=bamboo_id)
-            dataset.remove_calculation('sector')
-            dataset.reset(path=file_path)
-            if sector:
-                formula = '"%s"' % sector
-                print 'Adding column for sector: %s, formula: %s' %\
-                    (sector, formula)
-                result = dataset.add_calculation('sector', formula)
-                if result:
-                    print 'Calculation added successfully!'
-                else:
-                    print 'Problem adding calculation!'
+            dataset.reset(path=file_path,data_format=data_format)
         except PyBambooException:
             print 'Error creating dataset for file: %s' % filename
     else:
         print '%s has no bamboo id. Adding file to bamboo.' % name
         try:
-            dataset = Dataset(path=file_path)
+            dataset = Dataset(path=file_path, data_format=data_format)
             hash_updates[name] = {
                 'filename': filename,
                 'bamboo_id': dataset.id,
             }
         except PyBambooException:
             print 'Error creating dataset for file: %s' % filename
+    print "Updating bamboo dataset %s for sector %s is finished" % (bamboo_id, name)
 
 # update the hash file
 bamboo_hash.update(hash_updates)
